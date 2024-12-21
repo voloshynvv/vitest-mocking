@@ -74,7 +74,7 @@ describe('vi.fn() api', () => {
   });
 
   describe('mock rejected|resolved', () => {
-    it.only('mockResolvedValue', async () => {
+    it('mockResolvedValue', async () => {
       const mockFn = vi.fn().mockResolvedValue({ id: 1, name: 'john' });
 
       expect(await mockFn()).toEqual({ id: 1, name: 'john' });
@@ -108,7 +108,7 @@ describe('vi.fn() api', () => {
   });
 
   describe('mockClear | mockReset | mockRestore', () => {
-    // This method does not reset implementations!!!
+    // Clear mock history. This method does not reset implementations!!!
     it('mockClear', () => {
       const mockFn = vi.fn().mockReturnValue('default');
 
@@ -127,7 +127,7 @@ describe('vi.fn() api', () => {
       expect(mockFn).toHaveBeenCalled();
     });
 
-    // clear calls info and reset implementation
+    // clear mock history and reset implementation
     // resetting a mock to its default state!
 
     // This also resets all "once" implementations.
@@ -189,5 +189,46 @@ describe('vi.fn() api', () => {
       expect(mockFn).not.toHaveBeenCalled();
       expect(mockFn()).toBeUndefined();
     });
+  });
+});
+
+describe('Bad example', () => {
+  const mock = vi.fn();
+  const mock2 = vi.fn(() => '');
+
+  it('test 1', () => {
+    mock();
+    mock();
+    expect(mock2()).toBe('');
+  });
+
+  it('test 2', () => {
+    mock();
+
+    // Always remember to clear or restore mocks before or after each test run
+    // to undo mock state changes between runs!
+
+    // expect(mock).toHaveBeenCalledTimes(1); // ERROR: expected "spy" to be called 1 times, but got 3 times
+  });
+});
+
+describe('with resetting after each test', () => {
+  const mockFn = vi.fn();
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('test 1', () => {
+    mockFn();
+    mockFn();
+    mockFn();
+    mockFn();
+    expect(mockFn).toHaveBeenCalledTimes(4);
+  });
+
+  it('test 2', () => {
+    mockFn();
+    expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });
