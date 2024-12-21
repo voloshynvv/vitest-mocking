@@ -232,3 +232,31 @@ describe('with resetting after each test', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });
+
+describe.only('spyOn', () => {
+  const cart = {
+    getApples: () => 42,
+  };
+
+  afterEach(() => {
+    // vi.resetAllMocks();
+    // resetAllMocks resets original implementation, be careful !!!
+    // cart.getApples() will return undefined !!!
+
+    vi.restoreAllMocks();
+  });
+
+  it.only('spyOn', () => {
+    vi.spyOn(cart, 'getApples').mockImplementationOnce(() => 100);
+    // vi.spyOn(cart, 'getApples').mockReturnValue(100);
+
+    expect(cart.getApples()).toBe(100);
+    expect(cart.getApples()).toBe(42);
+    expect(cart.getApples).toHaveBeenCalledTimes(2);
+  });
+
+  it.only('spyOn', () => {
+    const originalValue = cart.getApples();
+    expect(originalValue).toBe(42);
+  });
+});
