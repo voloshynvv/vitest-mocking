@@ -1,6 +1,6 @@
 import { getUserById } from './user';
 import { server } from '../msw/server';
-import { http, HttpResponse } from 'msw';
+import { http } from 'msw';
 
 describe('user api', () => {
   it('returns user data', async () => {
